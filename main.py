@@ -7,11 +7,12 @@ from telegram.ext import (
     ApplicationBuilder, CommandHandler, MessageHandler,
     ContextTypes, filters,
 )
+import time
 
 load_dotenv()
 
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-MODEL = "gemini-3.8-flash"  # cek nama model terbaru di AI Studio
+MODEL = "gemini-2.5-flash-lite"  # cek nama model terbaru di AI Studio
 
 SYSTEM = """You help an Indonesian learner say things in everyday American English.
 The user may write in Indonesian or English.
@@ -31,14 +32,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+        t = time.perf_counter()
         resp = await client.aio.models.generate_content(
             model=MODEL,
             contents=update.message.text,
             config=types.GenerateContentConfig(
                 system_instruction=SYSTEM,
-                temperature=0.7,
+                temperature=0.3,
+                max_output_tokens=150,
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
             ),
         )
+        print(f"gemini: {time.perf_counter() - t:.1f}s")
         await update.message.reply_text(resp.text or "Coba kirim ulang ya.")
     except Exception as e:
         print("error:", e)
