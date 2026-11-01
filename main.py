@@ -12,7 +12,7 @@ import time
 load_dotenv()
 
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-MODEL = "gemini-2.5-flash-lite"  # cek nama model terbaru di AI Studio
+MODEL = "gemini-3.5-flash-lite"  # cek nama model terbaru di AI Studio
 
 SYSTEM = """You help an Indonesian learner say things in everyday American English.
 The user may write in Indonesian or English.
